@@ -35,7 +35,7 @@ module.exports = async (events, _opts) => {
 
   const puppeteerOpts = {
     headless: true,
-    // executablePath: "/usr/bin/chromium-browser",
+    executablePath: "/usr/bin/chromium-browser",
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
