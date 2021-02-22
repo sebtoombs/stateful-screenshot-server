@@ -14,6 +14,18 @@ const service = require("restana")({
 
 service.use(bodyParser.json({ limit: "50mb" }));
 
+if (process.env.API_MASTER_KEY) {
+  service.use((req, res, next) => {
+    if (
+      !req.headers["x-api-key"] ||
+      req.headers["x-api-key"] !== process.env.API_MASTER_KEY
+    ) {
+      return res.send(401);
+    }
+    return next();
+  });
+}
+
 function parseQueryOptions(query) {
   const opts = {};
   Object.keys(query).forEach((key) => {
