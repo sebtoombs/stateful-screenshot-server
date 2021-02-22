@@ -1,5 +1,7 @@
+
+
 # FROM zenika/alpine-chrome:86-with-puppeteer
-FROM node:10-alpine
+FROM node:15-alpine
 # FROM node:latest
 # FROM buildkite/puppeteer:latest
 
@@ -16,7 +18,7 @@ RUN apk update && apk add --no-cache nmap && \
   ttf-freefont \
   nss
 
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+# ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
 USER root 
 
