@@ -1,7 +1,22 @@
 # FROM zenika/alpine-chrome:86-with-puppeteer
 FROM node:10-alpine
+# FROM node:latest
+# FROM buildkite/puppeteer:latest
 
-RUN apk add --no-cache  chromium 
+# RUN apk add --no-cache  chromium 
+
+RUN apk update && apk add --no-cache nmap && \
+  echo @edge http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
+  echo @edge http://nl.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories && \
+  apk update && \
+  apk add --no-cache \
+  chromium \
+  harfbuzz \
+  "freetype>2.8" \
+  ttf-freefont \
+  nss
+
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
 USER root 
 

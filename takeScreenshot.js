@@ -34,7 +34,9 @@ module.exports = async (events, _opts) => {
   const { viewport } = opts;
 
   const puppeteerOpts = {
-    args: ["--no-sandbox"],
+    headless: true,
+    executablePath: "/usr/bin/chromium-browser",
+    args: ["--no-sandbox"], //"--disable-gpu"
   };
 
   if (viewport) {
@@ -97,7 +99,7 @@ module.exports = async (events, _opts) => {
           document.documentElement.innerHTML = document.querySelector(
             "iframe"
           ).contentDocument.documentElement.innerHTML;
-        }, 1);
+        }, 100);
       });
     }, 100);
 
