@@ -1,0 +1,15 @@
+# docker-compose.yml
+
+version: '3.8'
+services:
+
+  screenshot:
+    build:
+      context: ./
+    #environment:
+    #  DB_USER: mongodb
+    #depends_on:
+      #- mongodb
+    ports:
+      - '8080:8080'
+    restart: unless-stopped
