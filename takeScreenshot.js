@@ -35,13 +35,13 @@ module.exports = async (events, _opts) => {
 
   const puppeteerOpts = {
     headless: true,
-    executablePath: "/usr/bin/chromium-browser",
+    executablePath: "/usr/bin/chromium",
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
       // This will write shared memory files into /tmp instead of /dev/shm,
       // because Docker’s default for /dev/shm is 64MB
-      "--disable-dev-shm-usage",
+      // "--disable-dev-shm-usage",
     ], //"--disable-gpu"
   };
 
