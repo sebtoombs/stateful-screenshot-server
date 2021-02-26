@@ -14,11 +14,13 @@ const service = require("restana")({
 
 service.use(bodyParser.json({ limit: "50mb" }));
 
-if (process.env.API_MASTER_KEY) {
+if (process.env.API_MASTER_KEY || process.env.API_DEV_KEY) {
   service.use((req, res, next) => {
     if (
       !req.headers["x-api-key"] ||
-      req.headers["x-api-key"] !== process.env.API_MASTER_KEY
+      [process.env.API_MASTER_KEY, process.env.API_DEV_KEY].indexOf(
+        req.headers["x-api-key"]
+      ) === -1
     ) {
       return res.send(401);
     }
