@@ -1,5 +1,30 @@
 require("dotenv").config();
 
+function parseConfig() {
+  const config = Object.values(
+    Object.keys(process.env).reduce((obj, k) => {
+      const m = k.match(/^CONFIG_(\d+)_(.*?)$/);
+      if (!m) return obj;
+      const groupKey = m[1];
+      const key = m[2];
+      if (typeof obj[groupKey] === "undefined") {
+        obj[groupKey] = {};
+      }
+      obj[groupKey][key] = process.env[k];
+
+      return obj;
+    }, {})
+  );
+
+  return {
+    config,
+    getByKey(key) {
+      return config.find((c) => c.API_MASTER_KEY === key);
+    },
+  };
+}
+const allConfig = parseConfig();
+
 const bodyParser = require("body-parser");
 const takeScreenshot = require("./takeScreenshot");
 const uploadImage = require("./uploadImage");
@@ -14,19 +39,18 @@ const service = require("restana")({
 
 service.use(bodyParser.json({ limit: "50mb" }));
 
-if (process.env.API_MASTER_KEY || process.env.API_DEV_KEY) {
-  service.use((req, res, next) => {
-    if (
-      !req.headers["x-api-key"] ||
-      [process.env.API_MASTER_KEY, process.env.API_DEV_KEY].indexOf(
-        req.headers["x-api-key"]
-      ) === -1
-    ) {
-      return res.send(401);
-    }
-    return next();
-  });
-}
+service.use((req, res, next) => {
+  let config;
+  if (req.headers["x-api-key"]) {
+    config = allConfig.getByKey(req.headers["x-api-key"]);
+    req.config = config;
+  }
+
+  if (!req.config) {
+    return res.send(401);
+  }
+  return next();
+});
 
 function parseQueryOptions(query) {
   const opts = {};
@@ -81,7 +105,12 @@ service.post("/screenshot", async (req, res) => {
     const screenshot = await takeScreenshot(events, opts);
 
     if (opts.output === "upload") {
-      const uploadResult = await uploadImage(screenshot, type, filename);
+      const uploadResult = await uploadImage(
+        req.config,
+        screenshot,
+        type,
+        filename
+      );
       console.log("Saved screenshot", uploadResult.key);
       res.send(uploadResult);
     } else {
